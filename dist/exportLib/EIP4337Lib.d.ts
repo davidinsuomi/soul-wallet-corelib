@@ -1,30 +1,29 @@
 import { TransactionInfo } from "../entity/transactionInfo";
 import { UserOperation } from "../entity/userOperation";
+import { AbiItem } from 'web3-utils';
 export declare class EIP4337Lib {
     /**
-        * calculate EIP-4337 wallet address
-        * @param initCodeHash the init code after keccak256
-        * @param salt the salt number
-        * @param create2Factory create2factory address defined in EIP-2470
-        * @returns the EIP-4337 wallet address
-        */
-    static calculateWalletAddress(initCodeHash: string, salt: number, create2Factory?: string): string;
+     * User Operation
+     */
+    static UserOperation: typeof UserOperation;
     /**
-     * Initialize UserOperation
-     * @param sender EIP-4337 wallet address
-     * @param nonce unique value the sender uses to verify it is not a replay. (uint256) from 0
-     * @param initCode if set, the account contract will be created
-     * @param callData the method call to execute on this account.
-     * @param callGas gas used for validateUserOp and validatePaymasterUserOp
-     * @param verificationGas gas not calculated by the handleOps method, but added to the gas paid. Covers batch overhead.
-     * @param preVerificationGas gas not calculated by the handleOps method, but added to the gas paid. Covers batch overhead.
-     * @param maxFeePerGas same as EIP-1559 gas parameter
-     * @param maxPriorityFeePerGas same as EIP-1559 gas parameter
-     * @param paymaster if set, the paymaster will pay for the transaction instead of the sender
-     * @param paymasterData extra data used by the paymaster for validation
+     * calculate EIP-4337 wallet address
+     * @param initCode the init code
+     * @param jsonInterface the jsonInterface of the contract
+     * @param initArgs the init args
+     * @param salt the salt number
+     * @param create2Factory create2factory address defined in EIP-2470
      * @returns
      */
-    static initUserOperation(sender: string, nonce: number, initCode: string | null, callData: string, callGas: string, verificationGas: string, preVerificationGas: string, maxFeePerGas: string, maxPriorityFeePerGas: string, paymaster: string, paymasterData: string): UserOperation;
+    static calculateWalletAddressByCode(initCode: string, jsonInterface: AbiItem | AbiItem[], initArgs: any[] | undefined, salt: number, create2Factory?: string): string;
+    /**
+     * calculate EIP-4337 wallet address
+     * @param initCodeHash the init code after keccak256
+     * @param salt the salt number
+     * @param create2Factory create2factory address defined in EIP-2470
+     * @returns the EIP-4337 wallet address
+     */
+    static calculateWalletAddressByCodeHash(initCodeHash: string, salt: number, create2Factory?: string): string;
     /**
      * update gas
      * @param entryPoint the entryPoint address

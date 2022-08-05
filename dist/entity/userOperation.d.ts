@@ -2,53 +2,114 @@
  * @link https://github.com/eth-infinitism/account-abstraction/blob/develop/contracts/UserOperation.sol
  */
 declare class UserOperation {
+    private _sender;
+    private _nonce;
+    private _initCode;
+    private _callData;
+    private _callGas;
+    private _verificationGas;
+    private _preVerificationGas;
+    private _maxFeePerGas;
+    private _maxPriorityFeePerGas;
+    private _paymaster;
+    private _paymasterData;
+    private _signature;
+    constructor(sender: string, nonce: number, paymaster: string, callData?: string, initCode?: string);
     /**
-     * @param sender the sender account of this request
+     * the sender account of this request
      */
-    sender: string;
+    get sender(): string;
     /**
-     * @param nonce unique value the sender uses to verify it is not a replay.
+     * the sender account of this request
      */
-    nonce: number;
+    set sender(value: string);
     /**
-     * @param initCode if set, the account contract will be created by this constructor
+     * unique value the sender uses to verify it is not a replay.
      */
-    initCode: string;
+    get nonce(): number;
     /**
-     * @param callData the method call to execute on this account.
+     * unique value the sender uses to verify it is not a replay.
      */
-    callData: string;
+    set nonce(value: number);
     /**
-     * @param callGas gas used for validateUserOp and validatePaymasterUserOp
+     * if set, the account contract will be created by this constructor
      */
-    callGas: string;
+    get initCode(): string;
     /**
-     * @param verificationGas gas not calculated by the handleOps method, but added to the gas paid. Covers batch overhead.
+     * if set, the account contract will be created by this constructor
      */
-    verificationGas: string;
+    set initCode(value: string);
     /**
-     * @param preVerificationGas gas not calculated by the handleOps method, but added to the gas paid. Covers batch overhead.
+     * the method call to execute on this account.
      */
-    preVerificationGas: string;
+    get callData(): string;
     /**
-     * @param maxFeePerGas same as EIP-1559 gas parameter
+     * the method call to execute on this account.
      */
-    maxFeePerGas: string;
+    set callData(value: string);
     /**
-     * @param maxPriorityFeePerGas same as EIP-1559 gas parameter
+     * gas used for validateUserOp and validatePaymasterUserOp
      */
-    maxPriorityFeePerGas: string;
+    get callGas(): number;
     /**
-     * @param paymaster if set, the paymaster will pay for the transaction instead of the sender
+     * gas used for validateUserOp and validatePaymasterUserOp
      */
-    paymaster: string;
+    set callGas(value: number);
     /**
-     * @param paymasterData extra data used by the paymaster for validation
+     * gas not calculated by the handleOps method, but added to the gas paid. Covers batch overhead.
      */
-    paymasterData: string;
+    get verificationGas(): number;
     /**
-     * @param signature sender-verified signature over the entire request, the EntryPoint address and the chain ID.
+     * gas not calculated by the handleOps method, but added to the gas paid. Covers batch overhead.
      */
-    signature: string;
+    set verificationGas(value: number);
+    /**
+     * gas not calculated by the handleOps method, but added to the gas paid. Covers batch overhead.
+     */
+    get preVerificationGas(): number;
+    /**
+     * gas not calculated by the handleOps method, but added to the gas paid. Covers batch overhead.
+     */
+    set preVerificationGas(value: number);
+    /**
+     * same as EIP-1559 gas parameter
+     */
+    get maxFeePerGas(): number;
+    /**
+     * same as EIP-1559 gas parameter
+     */
+    set maxFeePerGas(value: number);
+    /**
+     * same as EIP-1559 gas parameter
+     */
+    get maxPriorityFeePerGas(): number;
+    /**
+     * same as EIP-1559 gas parameter
+     */
+    set maxPriorityFeePerGas(value: number);
+    /**
+     * if set, the paymaster will pay for the transaction instead of the sender
+     */
+    get paymaster(): string;
+    /**
+     * if set, the paymaster will pay for the transaction instead of the sender
+     */
+    set paymaster(value: string);
+    /**
+     * extra data used by the paymaster for validation
+     */
+    get paymasterData(): string;
+    /**
+     * extra data used by the paymaster for validation
+     */
+    set paymasterData(value: string);
+    /**
+     * sender-verified signature over the entire request, the EntryPoint address and the chain ID.
+     */
+    get signature(): string;
+    /**
+     * sender-verified signature over the entire request, the EntryPoint address and the chain ID.
+     */
+    set signature(value: string);
 }
 export { UserOperation };
