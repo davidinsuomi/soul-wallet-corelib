@@ -4,61 +4,228 @@
  * @Autor: z.cejay@gmail.com
  * @Date: 2022-07-25 10:53:52
  * @LastEditors: cejay
- * @LastEditTime: 2022-08-05 15:51:01
+ * @LastEditTime: 2022-08-05 20:57:52
  */
+
+import { Guard } from '../utils/guard';
 
 /**
  * @link https://github.com/eth-infinitism/account-abstraction/blob/develop/contracts/UserOperation.sol    
  */
+
 class UserOperation {
+
+    private _sender: string = '';
+    private _nonce: number = 0;
+    private _initCode: string = '0x';
+    private _callData: string = '0x';
+    private _callGas: number = 0;
+    private _verificationGas: number = 0;
+    private _preVerificationGas: number = 21000;
+    private _maxFeePerGas: number = 0;
+    private _maxPriorityFeePerGas: number = 0;
+    private _paymaster: string = '0x';
+    private _paymasterData: string = '0x';
+    private _signature: string = '0x';
+
+    constructor(
+        sender: string,
+        nonce: number,
+        paymaster: string,
+        callData: string = '0x',
+        initCode: string = '0x'
+    ) {
+        this.sender = sender;
+        this.nonce = nonce;
+        this.initCode = initCode;
+        this.callData = callData;
+        this.paymaster = paymaster;
+    }
+
+
     /**
-     * @param sender the sender account of this request
+     * the sender account of this request
      */
-    sender: string = '';
+    public get sender(): string {
+        return this._sender;
+    }
+
     /**
-     * @param nonce unique value the sender uses to verify it is not a replay.
+     * the sender account of this request
      */
-    nonce: number = 0;
+    public set sender(value: string) {
+        Guard.address(value);
+        this._sender = value;
+    }
+
     /**
-     * @param initCode if set, the account contract will be created by this constructor
+     * unique value the sender uses to verify it is not a replay.
      */
-    initCode: string = '0x';
+    public get nonce(): number {
+        return this._nonce;
+    }
+
     /**
-     * @param callData the method call to execute on this account.
+     * unique value the sender uses to verify it is not a replay.
      */
-    callData: string = '0x';
+    public set nonce(value: number) {
+        Guard.uint(value);
+        this._nonce = value;
+    }
+
     /**
-     * @param callGas gas used for validateUserOp and validatePaymasterUserOp
+     * if set, the account contract will be created by this constructor
      */
-    callGas: string = '0';
+    public get initCode(): string {
+        return this._initCode;
+    }
+
     /**
-     * @param verificationGas gas not calculated by the handleOps method, but added to the gas paid. Covers batch overhead.
+     * if set, the account contract will be created by this constructor
      */
-    verificationGas: string = '0';
+    public set initCode(value: string) {
+        Guard.hex(value);
+        this._initCode = value;
+    }
+
     /**
-     * @param preVerificationGas gas not calculated by the handleOps method, but added to the gas paid. Covers batch overhead.
+     * the method call to execute on this account.
      */
-    preVerificationGas: string = '0';
+    public get callData(): string {
+        return this._callData;
+    }
+
     /**
-     * @param maxFeePerGas same as EIP-1559 gas parameter
+     * the method call to execute on this account.
      */
-    maxFeePerGas: string = '0';
+    public set callData(value: string) {
+        Guard.hex(value);
+        this._callData = value;
+    }
+
     /**
-     * @param maxPriorityFeePerGas same as EIP-1559 gas parameter
+     * gas used for validateUserOp and validatePaymasterUserOp
      */
-    maxPriorityFeePerGas: string = '0';
+    public get callGas(): number {
+        return this._callGas;
+    }
+
     /**
-     * @param paymaster if set, the paymaster will pay for the transaction instead of the sender
+     * gas used for validateUserOp and validatePaymasterUserOp
      */
-    paymaster: string = '0x';
+    public set callGas(value: number) {
+        Guard.uint(value);
+        this._callGas = value;
+    }
+
     /**
-     * @param paymasterData extra data used by the paymaster for validation
+     * gas not calculated by the handleOps method, but added to the gas paid. Covers batch overhead.
      */
-    paymasterData: string = '0x';
+    public get verificationGas(): number {
+        return this._verificationGas;
+    }
+
     /**
-     * @param signature sender-verified signature over the entire request, the EntryPoint address and the chain ID.
+     * gas not calculated by the handleOps method, but added to the gas paid. Covers batch overhead.
      */
-    signature: string = '0x';
+    public set verificationGas(value: number) {
+        Guard.uint(value);
+        this._verificationGas = value;
+    }
+
+    /**
+     * gas not calculated by the handleOps method, but added to the gas paid. Covers batch overhead.
+     */
+    public get preVerificationGas(): number {
+        return this._preVerificationGas;
+    }
+
+    /**
+     * gas not calculated by the handleOps method, but added to the gas paid. Covers batch overhead.
+     */
+    public set preVerificationGas(value: number) {
+        Guard.uint(value);
+        this._preVerificationGas = value;
+    }
+
+    /**
+     * same as EIP-1559 gas parameter
+     */
+    public get maxFeePerGas(): number {
+        return this._maxFeePerGas;
+    }
+
+    /**
+     * same as EIP-1559 gas parameter
+     */
+    public set maxFeePerGas(value: number) {
+        Guard.uint(value);
+        this._maxFeePerGas = value;
+    }
+
+    /**
+     * same as EIP-1559 gas parameter
+     */
+    public get maxPriorityFeePerGas(): number {
+        return this._maxPriorityFeePerGas;
+    }
+
+    /**
+     * same as EIP-1559 gas parameter
+     */
+    public set maxPriorityFeePerGas(value: number) {
+        Guard.uint(value);
+        this._maxPriorityFeePerGas = value;
+    }
+
+    /**
+     * if set, the paymaster will pay for the transaction instead of the sender
+     */
+    public get paymaster(): string {
+        return this._paymaster;
+    }
+
+    /**
+     * if set, the paymaster will pay for the transaction instead of the sender
+     */
+    public set paymaster(value: string) {
+        Guard.address(value);
+        this._paymaster = value;
+    }
+
+    /**
+     * extra data used by the paymaster for validation
+     */
+    public get paymasterData(): string {
+        return this._paymasterData;
+    }
+
+
+    /**
+     * extra data used by the paymaster for validation
+     */
+    public set paymasterData(value: string) {
+        Guard.hex(value);
+        this._paymasterData = value;
+    }
+
+    /**
+     * sender-verified signature over the entire request, the EntryPoint address and the chain ID.
+     */
+    public get signature(): string {
+        return this._signature;
+    }
+
+
+    /**
+     * sender-verified signature over the entire request, the EntryPoint address and the chain ID.
+     */
+    public set signature(value: string) {
+        Guard.hex(value);
+        this._signature = value;
+    }
+
+
 
 }
 
