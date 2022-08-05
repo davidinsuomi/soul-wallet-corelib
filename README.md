@@ -7,4 +7,8 @@ The core EIP-4337 interaction library for Soul-Wallet
 npm install
 ```
 
-#TODO
+## Usage
+
+```javascript
+import { WalletLib } from 'soul-wallet-lib';
+```
