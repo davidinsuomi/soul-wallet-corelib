@@ -4,7 +4,7 @@
  * @Autor: z.cejay@gmail.com
  * @Date: 2022-07-25 10:53:52
  * @LastEditors: cejay
- * @LastEditTime: 2022-08-05 20:57:52
+ * @LastEditTime: 2022-08-05 22:46:12
  */
 
 import { Guard } from '../utils/guard';
@@ -114,7 +114,7 @@ class UserOperation {
      * gas used for validateUserOp and validatePaymasterUserOp
      */
     public set callGas(value: number) {
-        Guard.uint(value);
+        Guard.positiveInteger(value);
         this._callGas = value;
     }
 
@@ -129,7 +129,7 @@ class UserOperation {
      * gas not calculated by the handleOps method, but added to the gas paid. Covers batch overhead.
      */
     public set verificationGas(value: number) {
-        Guard.uint(value);
+        Guard.positiveInteger(value);
         this._verificationGas = value;
     }
 
@@ -144,7 +144,7 @@ class UserOperation {
      * gas not calculated by the handleOps method, but added to the gas paid. Covers batch overhead.
      */
     public set preVerificationGas(value: number) {
-        Guard.uint(value);
+        Guard.positiveInteger(value);
         this._preVerificationGas = value;
     }
 
@@ -159,7 +159,7 @@ class UserOperation {
      * same as EIP-1559 gas parameter
      */
     public set maxFeePerGas(value: number) {
-        Guard.uint(value);
+        Guard.positiveInteger(value);
         this._maxFeePerGas = value;
     }
 
@@ -174,7 +174,7 @@ class UserOperation {
      * same as EIP-1559 gas parameter
      */
     public set maxPriorityFeePerGas(value: number) {
-        Guard.uint(value);
+        Guard.positiveInteger(value);
         this._maxPriorityFeePerGas = value;
     }
 

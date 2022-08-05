@@ -4,7 +4,7 @@
  * @Autor: z.cejay@gmail.com
  * @Date: 2022-08-05 16:08:23
  * @LastEditors: cejay
- * @LastEditTime: 2022-08-05 21:32:15
+ * @LastEditTime: 2022-08-05 22:32:28
  */
 
 import { getCreate2Address, hexlify, hexZeroPad, keccak256 } from "ethers/lib/utils";
@@ -13,7 +13,8 @@ import { TransactionInfo } from "../entity/transactionInfo";
 import { UserOperation } from "../entity/userOperation";
 import { Guard } from "../utils/guard";
 import { Web3Helper } from "../utils/web3Helper";
-import { AbiItem } from 'web3-utils';
+import { IContract } from "../contracts/icontract";
+import { signUserOp } from "../utils/userOp";
 
 
 export class EIP4337Lib {
@@ -26,7 +27,7 @@ export class EIP4337Lib {
 
     /**
      * calculate EIP-4337 wallet address
-     * @param initCode the init code
+     * @param initContract the init Contract
      * @param jsonInterface the jsonInterface of the contract
      * @param initArgs the init args
      * @param salt the salt number
@@ -34,12 +35,16 @@ export class EIP4337Lib {
      * @returns 
      */
     public static calculateWalletAddressByCode(
-        initCode: string, jsonInterface: AbiItem | AbiItem[], initArgs: any[] | undefined,
-        salt: number, create2Factory = Create2Factory): string {
-        Guard.hex(initCode);
+        initContract: IContract,
+        initArgs: any[] | undefined,
+        salt: number,
+        create2Factory = Create2Factory): string {
+
+        Guard.hex(initContract.bytecode);
+
         const web3 = Web3Helper.new().web3;
-        const initCodeWithArgs = new web3.eth.Contract(jsonInterface).deploy({
-            data: initCode,
+        const initCodeWithArgs = new web3.eth.Contract(initContract.ABI).deploy({
+            data: initContract.bytecode,
             arguments: initArgs
         }).encodeABI();
         const initCodeHash = keccak256(initCodeWithArgs);
@@ -54,7 +59,10 @@ export class EIP4337Lib {
      * @param create2Factory create2factory address defined in EIP-2470
      * @returns the EIP-4337 wallet address
      */
-    public static calculateWalletAddressByCodeHash(initCodeHash: string, salt: number, create2Factory = Create2Factory): string {
+    public static calculateWalletAddressByCodeHash(
+        initCodeHash: string,
+        salt: number,
+        create2Factory = Create2Factory): string {
 
         Guard.keccak256(initCodeHash);
         Guard.uint(salt);
@@ -90,11 +98,16 @@ export class EIP4337Lib {
      * @param userOperation the userOperation to sign
      * @param privateKey private key
      */
-    public static signUserOp(userOperation: UserOperation, privateKey: string) {
-        // auto update the gas before signing
-        // #TODO
+    public static signUserOp(
+        userOperation: UserOperation,
+        entryPoint: string,
+        chainId: number,
+        privateKey: string) {
 
-        userOperation.signature = '<signature>';
+        Guard.uint(chainId);
+        Guard.address(entryPoint);
+
+        userOperation.signature = signUserOp(userOperation, entryPoint, chainId, privateKey);
     }
 
 }

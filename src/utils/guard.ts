@@ -7,7 +7,7 @@ import { Web3Helper } from "./web3Helper";
  * @Autor: z.cejay@gmail.com
  * @Date: 2022-08-05 20:12:45
  * @LastEditors: cejay
- * @LastEditTime: 2022-08-05 21:27:56
+ * @LastEditTime: 2022-08-05 22:44:14
  */
 export class Guard {
 
@@ -35,8 +35,12 @@ export class Guard {
             if (Guard.web3.utils.toBN(value).lt(Guard.web3.utils.toBN(0))) {
                 throw new Error('Invalid uint');
             }
-        } else if (value < 0) {
-            throw new Error('Invalid uint');
+        } else {
+            if (value < 0) {
+                throw new Error('Invalid uint');
+            } else if (value % 1 !== 0) {
+                throw new Error('Invalid uint');
+            }
         }
     }
 
@@ -58,5 +62,12 @@ export class Guard {
             throw new Error('Invalid keccak256 value');
         }
     }
-    
+
+    public static positiveInteger(value: number) {
+        Guard.uint(value);
+        if (value === 0) {
+            throw new Error('Invalid positive integer');
+        }
+    }
+
 }
