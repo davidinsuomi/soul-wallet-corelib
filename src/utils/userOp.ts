@@ -6,6 +6,7 @@
 import { arrayify, defaultAbiCoder, keccak256 } from 'ethers/lib/utils'
 import { ecsign, toRpcSig, keccak256 as keccak256_buffer } from 'ethereumjs-util'
 import { UserOperation } from '../entity/userOperation'
+import Web3 from 'web3'
 
 function encode(typevalues: Array<{ type: string, val: any }>, forSignature: boolean): string {
   const types = typevalues.map(typevalue => typevalue.type === 'bytes' && forSignature ? 'bytes32' : typevalue.type)
@@ -95,8 +96,12 @@ export function getRequestId(op: UserOperation, entryPointAddress: string, chain
   return keccak256(enc)
 }
 
+enum SignatureMode {
+  owner = 0,
+  guardians = 1
+}
 
-export function signUserOp(op: UserOperation, entryPointAddress: string, chainId: number, privateKey: string): string {
+function _signUserOp(op: UserOperation, entryPointAddress: string, chainId: number, privateKey: string): string {
   const message = getRequestId(op, entryPointAddress, chainId)
   const msg1 = Buffer.concat([
     Buffer.from('\x19Ethereum Signed Message:\n32', 'ascii'),
@@ -108,5 +113,22 @@ export function signUserOp(op: UserOperation, entryPointAddress: string, chainId
   // (but without "async"
   const signedMessage1 = toRpcSig(sig.v, sig.r, sig.s);
   return signedMessage1;
+}
+
+/**
+ * sign a user operation with the given private key
+ * @param op 
+ * @param entryPointAddress 
+ * @param chainId 
+ * @param privateKey 
+ * @returns signature
+ */
+export function signUserOp(op: UserOperation, entryPointAddress: string, chainId: number, privateKey: string): string {
+  const sign = _signUserOp(op, entryPointAddress, chainId, privateKey);
+  const enc = defaultAbiCoder.encode(['uint8', 'tuple(address,bytes)[]'], [SignatureMode.owner, [
+    new Web3().eth.accounts.privateKeyToAccount(privateKey).address,
+    sign
+  ]]);
+  return enc;
 }
 

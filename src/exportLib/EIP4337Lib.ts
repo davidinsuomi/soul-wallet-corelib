@@ -4,7 +4,7 @@
  * @Autor: z.cejay@gmail.com
  * @Date: 2022-08-05 16:08:23
  * @LastEditors: cejay
- * @LastEditTime: 2022-08-05 22:32:28
+ * @LastEditTime: 2022-08-30 12:22:11
  */
 
 import { getCreate2Address, hexlify, hexZeroPad, keccak256 } from "ethers/lib/utils";
@@ -15,6 +15,7 @@ import { Guard } from "../utils/guard";
 import { Web3Helper } from "../utils/web3Helper";
 import { IContract } from "../contracts/icontract";
 import { signUserOp } from "../utils/userOp";
+import Web3 from "web3";
 
 
 export class EIP4337Lib {
@@ -108,6 +109,42 @@ export class EIP4337Lib {
         Guard.address(entryPoint);
 
         userOperation.signature = signUserOp(userOperation, entryPoint, chainId, privateKey);
+    }
+
+
+
+    /**
+     * get next nonce number from contract wallet
+     * @param walletAddress the wallet address
+     * @param web3 the web3 instance
+     * @param defaultBlock "earliest", "latest" and "pending"
+     * @returns the next nonce number
+     */
+    private static async getNextNonce(walletAddress: string, web3: Web3, defaultBlock = 'latest'): Promise<number> {
+        Guard.address(walletAddress);
+        try {
+            const code = await web3.eth.getCode(walletAddress, defaultBlock);
+            // check contract is exist
+            if (code === '0x') {
+                return 0;
+            } else {
+                const contract = new web3.eth.Contract([{ "inputs": [], "name": "nonce", "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }], "stateMutability": "view", "type": "function" }], walletAddress);
+                const nonce = await contract.methods.nonce().call();
+                // try parse to number
+                const nextNonce = parseInt(nonce, 10);
+                if (isNaN(nextNonce)) {
+                    throw new Error('nonce is not a number');
+                }
+                return nextNonce + 1;
+            }
+
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    public static Utils = {
+        getNextNonce: EIP4337Lib.getNextNonce
     }
 
 }
