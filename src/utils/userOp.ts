@@ -125,10 +125,10 @@ function _signUserOp(op: UserOperation, entryPointAddress: string, chainId: numb
  */
 export function signUserOp(op: UserOperation, entryPointAddress: string, chainId: number, privateKey: string): string {
   const sign = _signUserOp(op, entryPointAddress, chainId, privateKey);
-  const enc = defaultAbiCoder.encode(['uint8', 'tuple(address,bytes)[]'], [SignatureMode.owner, [
+  const enc = defaultAbiCoder.encode(['uint8', 'tuple(address,bytes)[]'], [SignatureMode.owner, [[
     new Web3().eth.accounts.privateKeyToAccount(privateKey).address,
     sign
-  ]]);
+  ]]]);
   return enc;
 }
 
